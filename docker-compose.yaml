@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  kafka:
+    image: docker.io/confluentinc/cp-kafka:7.5.0
+    environment:
+      KAFKA_NODE_ID: 0
+      KAFKA_ADVERTISED_LISTENERS: SASL://192.168.1.8:9092
+      # KAFKA_LISTENER_NAME_SASL_PLAIN_SASL_JAAS_CONFIG:  org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="admin-secret" user_admin="admin-secret" user_kafkaclient1="kafkaclient1-secret";
+      # KAFKA_LISTENER_NAME_CONTROLLER_PLAIN_SASL_JAAS_CONFIG: org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="admin-secret" user_admin="admin-secret" user_kafkaclient1="kafkaclient1-secret";
+      KAFKA_SASL_ENABLED_MECHANISMS: PLAIN
+      KAFKA_SASL_MECHANISM_CONTROLLER_PROTOCOL: PLAIN
+      KAFKA_CONTROLLER_ENABLED_MECHANISMS: PLAIN
+      KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL: PLAIN
+      KAFKA_INTER_BROKER_LISTENER_NAME: SASL
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:SASL_PLAINTEXT,SASL:SASL_PLAINTEXT
+      CLUSTER_ID: 6PMpHYL9QkeyXRj9Nrp4KA
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 0@localhost:29093 
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1" #  each partition of the offsets topic will have 1 replicas stored on different brokers.
+      KAFKA_NUM_PARTITIONS: "1" #  any new topics created in the Kafka cluster will have 1 partitions by default.  data within those topics will be distributed across 6 partitions, which can improve the throughput and parallel processing
+      KAFKA_DEFAULT_REPLICATION_FACTOR: "1" # any new topics created in the Kafka cluster will have a replication factor of 1 by default
+      KAFKA_MIN_INSYNC_REPLICAS: "1" # and the replication factor for a topic is 3, then a write operation will only be considered successful if at least 2 replicas (out of the 3) are in sync. If fewer than 2 replicas are in sync, the write operation will fail.
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENERS: SASL://0.0.0.0:9092,CONTROLLER://0.0.0.0:29093
+      KAFKA_SUPER_USERS: User:admin
+      KAFKA_AUTHORIZER_CLASS_NAME: org.apache.kafka.metadata.authorizer.StandardAuthorizer
+      KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "false"
+      KAFKA_OPTS: "-Djava.security.auth.login.config=/etc/kafka/kafka_server_jaas.conf"
+      # KAFKA_SASL_SERVER_CALLBACK_HANDLER_CLASS: RogoPlainServerCallbackHandler
+    ports:
+      - 9092:9092
+      - 29093:29093
+    volumes:
+      # - ./data/kafka-config:/etc/kafka
+      # - ./data/kafka-data:/var/lib/kafka/data
+      # - ./data/kafka-logs:/var/log
+      - ./kafka_server_jaas.conf:/etc/kafka/kafka_server_jaas.conf
+ 
