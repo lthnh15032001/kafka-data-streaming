@@ -5,7 +5,7 @@ services:
     image: docker.io/confluentinc/cp-kafka:7.5.0
     environment:
       KAFKA_NODE_ID: 0
-      KAFKA_ADVERTISED_LISTENERS: SASL://192.168.1.8:9092
+      KAFKA_ADVERTISED_LISTENERS: SASL://192.168.1.9:9092
       # KAFKA_LISTENER_NAME_SASL_PLAIN_SASL_JAAS_CONFIG:  org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="admin-secret" user_admin="admin-secret" user_kafkaclient1="kafkaclient1-secret";
       # KAFKA_LISTENER_NAME_CONTROLLER_PLAIN_SASL_JAAS_CONFIG: org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="admin-secret" user_admin="admin-secret" user_kafkaclient1="kafkaclient1-secret";
       KAFKA_SASL_ENABLED_MECHANISMS: PLAIN
@@ -36,4 +36,18 @@ services:
       # - ./data/kafka-data:/var/lib/kafka/data
       # - ./data/kafka-logs:/var/log
       - ./kafka_server_jaas.conf:/etc/kafka/kafka_server_jaas.conf
- 
+  kafka-ui:
+    image: 'provectuslabs/kafka-ui:latest'
+    ports:
+      - '8080:8080'
+    depends_on:
+      - kafka
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local #5
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: 192.168.1.9:9092 #6
+      AUTH_TYPE: "LOGIN_FORM"
+      SPRING_SECURITY_USER_NAME: xxx
+      SPRING_SECURITY_USER_PASSWORD: xxx
+      KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL: SASL_PLAINTEXT
+      KAFKA_CLUSTERS_0_PROPERTIES_SASL_MECHANISM: PLAIN
+      KAFKA_CLUSTERS_0_PROPERTIES_SASL_JAAS_CONFIG: org.apache.kafka.common.security.scram.ScramLoginModule required username="admin" password="admin-secret";
