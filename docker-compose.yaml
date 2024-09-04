@@ -5,7 +5,7 @@ services:
     image: docker.io/confluentinc/cp-kafka:7.5.0
     environment:
       KAFKA_NODE_ID: 0
-      KAFKA_ADVERTISED_LISTENERS: SASL://192.168.1.9:9092
+      KAFKA_ADVERTISED_LISTENERS: SASL://192.168.1.9:9092, PLAINTEXT://kafka:9094
       # KAFKA_LISTENER_NAME_SASL_PLAIN_SASL_JAAS_CONFIG:  org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="admin-secret" user_admin="admin-secret" user_kafkaclient1="kafkaclient1-secret";
       # KAFKA_LISTENER_NAME_CONTROLLER_PLAIN_SASL_JAAS_CONFIG: org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="admin-secret" user_admin="admin-secret" user_kafkaclient1="kafkaclient1-secret";
       KAFKA_SASL_ENABLED_MECHANISMS: PLAIN
@@ -13,7 +13,7 @@ services:
       KAFKA_CONTROLLER_ENABLED_MECHANISMS: PLAIN
       KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL: PLAIN
       KAFKA_INTER_BROKER_LISTENER_NAME: SASL
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:SASL_PLAINTEXT,SASL:SASL_PLAINTEXT
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:SASL_PLAINTEXT,SASL:SASL_PLAINTEXT, PLAINTEXT:SASL_PLAINTEXT
       CLUSTER_ID: 6PMpHYL9QkeyXRj9Nrp4KA
       KAFKA_CONTROLLER_QUORUM_VOTERS: 0@localhost:29093 
       KAFKA_PROCESS_ROLES: broker,controller
@@ -22,7 +22,7 @@ services:
       KAFKA_DEFAULT_REPLICATION_FACTOR: "1" # any new topics created in the Kafka cluster will have a replication factor of 1 by default
       KAFKA_MIN_INSYNC_REPLICAS: "1" # and the replication factor for a topic is 3, then a write operation will only be considered successful if at least 2 replicas (out of the 3) are in sync. If fewer than 2 replicas are in sync, the write operation will fail.
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_LISTENERS: SASL://0.0.0.0:9092,CONTROLLER://0.0.0.0:29093
+      KAFKA_LISTENERS: SASL://0.0.0.0:9092,CONTROLLER://0.0.0.0:29093, PLAINTEXT://0.0.0.0:9094
       KAFKA_SUPER_USERS: User:admin
       KAFKA_AUTHORIZER_CLASS_NAME: org.apache.kafka.metadata.authorizer.StandardAuthorizer
       KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "false"
@@ -44,10 +44,10 @@ services:
       - kafka
     environment:
       KAFKA_CLUSTERS_0_NAME: local #5
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: 192.168.1.9:9092 #6
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9094 #6
       AUTH_TYPE: "LOGIN_FORM"
       SPRING_SECURITY_USER_NAME: xxx
       SPRING_SECURITY_USER_PASSWORD: xxx
       KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL: SASL_PLAINTEXT
       KAFKA_CLUSTERS_0_PROPERTIES_SASL_MECHANISM: PLAIN
-      KAFKA_CLUSTERS_0_PROPERTIES_SASL_JAAS_CONFIG: org.apache.kafka.common.security.scram.ScramLoginModule required username="admin" password="admin-secret";
+      KAFKA_CLUSTERS_0_PROPERTIES_SASL_JAAS_CONFIG: org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="admin-secret";
